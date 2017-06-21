@@ -9,6 +9,11 @@ class Curl
     @curl.get url, headers, &block
   end
 
+  def self.mkcol(url, headers = nil, &block)
+    @curl ||= new
+    @curl.mkcol url, headers, &block
+  end
+
   def self.patch(url, data, headers = nil, &block)
     @curl ||= new
     @curl.patch url, data, headers, &block

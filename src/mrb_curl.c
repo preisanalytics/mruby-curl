@@ -246,6 +246,22 @@ mrb_curl_get(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_curl_mkcol(mrb_state *mrb, mrb_value self)
+{
+  CURL* curl = DATA_GET_PTR(mrb, self, &mrb_curl_type, CURL);
+
+  mrb_value url = mrb_nil_value();
+  mrb_value headers = mrb_nil_value();
+  mrb_value b = mrb_nil_value();
+  mrb_get_args(mrb, "S|H!&", &url, &headers, &b);
+
+  curl_easy_reset(curl);
+  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "MKCOL");
+
+  return mrb_curl_perform(mrb, curl, url, headers, b);
+}
+
+static mrb_value
 mrb_curl_patch(mrb_state *mrb, mrb_value self)
 {
   CURL* curl = DATA_GET_PTR(mrb, self, &mrb_curl_type, CURL);
@@ -393,6 +409,7 @@ mrb_mruby_curl_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, _class_curl, "initialize", mrb_curl_init, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, _class_curl, "delete", mrb_curl_delete, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));
+  mrb_define_method(mrb, _class_curl, "mkcol",  mrb_curl_mkcol,    MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));
   mrb_define_method(mrb, _class_curl, "get",    mrb_curl_get,    MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));
   mrb_define_method(mrb, _class_curl, "patch",  mrb_curl_patch,  MRB_ARGS_REQ(2) | MRB_ARGS_OPT(1));
   mrb_define_method(mrb, _class_curl, "post",   mrb_curl_post,   MRB_ARGS_REQ(2) | MRB_ARGS_OPT(1));
